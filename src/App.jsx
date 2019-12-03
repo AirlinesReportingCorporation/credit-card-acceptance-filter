@@ -17,7 +17,7 @@ function search(nameKey, myArray) {
   }
 }
 
-function multiMatch(cardTypes, myArray , key) {
+function multiMatch(cardTypes, myArray, key) {
   var tempArray = [];
   for (var i = 0; i < myArray.length; i++) {
     var truthArray = 0;
@@ -31,10 +31,9 @@ function multiMatch(cardTypes, myArray , key) {
       }
     }
 
-    if(truthArray == cardTypes.length){
+    if (truthArray == cardTypes.length) {
       tempArray.push(myArray[i]);
     }
-
   }
 
   return tempArray;
@@ -55,7 +54,7 @@ class App extends Component {
     this.getRoute = this.getRoute.bind(this);
     this.airlineChange = this.airlineChange.bind(this);
     this.cardChange = this.cardChange.bind(this);
-    this.cardGen = this.cardGen.bind(this);
+    this.clearfilters = this.clearfilters.bind(this);
   }
 
   componentDidMount() {
@@ -96,12 +95,27 @@ class App extends Component {
     });
   }
 
-  airlineChange() {
-    this.setState({ filter: event.target.value });
+  airlineChange(e) {
+    this.setState({ filter: e.target.value });
     //this.setState({filterObj: search(event.target.value, )})
+    var x = document.getElementsByClassName("cardType");
+    for (var i = 0; i < x.length; i++) {
+      x[i].checked = false;
+    }
+    
+    this.setState({ cardFilter: [] });
   }
 
-  cardGen() {}
+  clearfilters() {
+    //uncheck the checkboxes
+    var x = document.getElementsByClassName("cardType");
+    for (var i = 0; i < x.length; i++) {
+      x[i].checked = false;
+    }
+
+    this.setState({ filter: "" });
+    this.setState({ cardFilter: [] });
+  }
 
   cardChange(cardType) {
     //remove airline filter
@@ -118,8 +132,12 @@ class App extends Component {
       this.setState({ cardFilter: curArray });
     }
 
-    var match = multiMatch(this.state.cardFilter, this.state.jsonData, "Payment Type Accepted");
-    this.setState({cardData: match});
+    var match = multiMatch(
+      this.state.cardFilter,
+      this.state.jsonData,
+      "Payment Type Accepted"
+    );
+    this.setState({ cardData: match });
   }
 
   //getRoute on route Navigation
@@ -141,8 +159,10 @@ class App extends Component {
       this.state.filter != "" && this.state.filter != null
         ? [search(this.state.filter, this.state.jsonData)]
         : this.state.jsonData;
+
     
-    if(this.state.cardFilter.length > 0) {
+
+    if (this.state.cardFilter.length > 0) {
       objtofilter = this.state.cardData;
     }
 
@@ -152,10 +172,19 @@ class App extends Component {
         exception = "";
 
       if (data["Payment Type Accepted"]) {
+        var pay = data["Payment Type Accepted"].split("\n");
+        var innerPayment = pay.map((data, i) => {
+          return (
+            <div className={"paymentpill " + data} key={i}>
+              {data}
+            </div>
+          );
+        });
+
         payment = (
           <div className="ccPayment">
-            <strong>Payment Types Accepted</strong>
-            <p>{data["Payment Type Accepted"]}</p>
+            <strong>Form of Payment Accepted</strong>
+            {innerPayment}
           </div>
         );
       }
@@ -163,7 +192,7 @@ class App extends Component {
       if (data["Code"]) {
         code = (
           <div className="ccCode">
-            <strong>Code</strong>
+            <strong>Restriction</strong>
             <p>{data["Code"]}</p>
           </div>
         );
@@ -181,13 +210,13 @@ class App extends Component {
       var returnHTML = (
         <div key={i} className={"ccAirlineContainer " + data["Airline"]}>
           <div className="row">
-            <div className="col-md-4">
+            <div className="col-lg-4">
               <div className="ccSection1">
                 <div className={"ccAirline"}>{data["Airline"]}</div>
                 <div className="ccAirlineCode">{data["Airline Code"]}</div>
               </div>
             </div>
-            <div className="col-md-8">
+            <div className="col-lg-8">
               <div className="ccSection2">
                 {payment}
                 {code}
@@ -205,36 +234,56 @@ class App extends Component {
       <div>
         <div className="ccJumbo">
           <div className="bgOpacity"></div>
-          <h2 className="animated fadeInDown">Credit Card Acceptance</h2>
+          <h2 className="animated fadeInDown">Payment Acceptance</h2>
           <p className="animated fadeIn">
-            The Airline Credit Card Acceptance Chart denotes Airlines&apos;
-            acceptance of different credit cards. The chart also identifies any
-            restrictions Airlines have for accepting credit cards on their
-            behalf.
+            The Airlines Reporting Corporation, ARC, provides processing of
+            various forms of payments on behalf of an airline.
+          </p>
+          <p className="animated fadeIn">
+            Each airline determines which forms of payments it accepts and then
+            works with the Global Distribution Systems and ARC to support those
+            payments. Each airline may also place restrictions or exceptions
+            based on the form of payment.
+          </p>
+          <p className="animated fadeIn">
+            The following information is provided to assist agencies and other
+            parties in identifying forms of payment accepted by airlines and any
+            restriction place on the acceptance of those forms of payment.
+          </p>
+          <p className="animated fadeIn">
+            If you have any question about payment acceptance through ARC please
+            contact the Payment Services team at &nbsp;
+            <a href="mailto:????????services@arccorp.com">
+              ????????services@arccorp.com
+            </a>
+            .
           </p>
         </div>
 
         <div className="ccContainer">
           <div className="container">
             <div className="row">
-              <div className="col-md-3">
+              <div className="col-lg-3">
                 <div className="ccFilterSidebar">
-                  <h3>Filter</h3>
+                  <h3>Filter By:</h3>
 
                   <div className="ccFilterTitle">Airline</div>
                   <select
                     name="Airline"
                     id="Airline"
-                    onChange={this.airlineChange}
+                    onChange={(e) => this.airlineChange(e)}
+                    onInput={(e) => this.airlineChange(e)}
+                    defaultValue={this.state.filter}
                     value={this.state.filter}
                   >
                     <option value="">Select an Airline</option>
                     {airlineOptions}
                   </select>
 
-                  <div className="ccFilterTitle">Card Type</div>
+                  <div className="ccFilterTitle">Form of Payment</div>
                   <div className="ccFilterSection">
                     <input
+                      className="cardType"
                       name="card"
                       type="checkbox"
                       onChange={this.cardChange.bind(this, "AMEX")}
@@ -242,6 +291,7 @@ class App extends Component {
                     <label htmlFor="">AMEX</label>
                     <br />
                     <input
+                      className="cardType"
                       name="card"
                       type="checkbox"
                       onChange={this.cardChange.bind(this, "CA")}
@@ -249,6 +299,7 @@ class App extends Component {
                     <label htmlFor="">CA</label>
                     <br />
                     <input
+                      className="cardType"
                       name="card"
                       type="checkbox"
                       onChange={this.cardChange.bind(this, "DCI")}
@@ -256,6 +307,7 @@ class App extends Component {
                     <label htmlFor="">DCI</label>
                     <br />
                     <input
+                      className="cardType"
                       name="card"
                       type="checkbox"
                       onChange={this.cardChange.bind(this, "DS")}
@@ -263,6 +315,7 @@ class App extends Component {
                     <label htmlFor="">DS</label>
                     <br />
                     <input
+                      className="cardType"
                       name="card"
                       type="checkbox"
                       onChange={this.cardChange.bind(this, "JCB")}
@@ -270,6 +323,7 @@ class App extends Component {
                     <label htmlFor="">JCB</label>
                     <br />
                     <input
+                      className="cardType"
                       name="card"
                       type="checkbox"
                       onChange={this.cardChange.bind(this, "UATP")}
@@ -277,6 +331,7 @@ class App extends Component {
                     <label htmlFor="">UATP</label>
                     <br />
                     <input
+                      className="cardType"
                       name="card"
                       type="checkbox"
                       onChange={this.cardChange.bind(this, "VI")}
@@ -285,10 +340,12 @@ class App extends Component {
                     <br />
                   </div>
 
-                  
+                  <div onClick={this.clearfilters} className="filterclear">
+                    Clear Filters
+                  </div>
                 </div>
               </div>
-              <div className="col-md-9">
+              <div className="col-lg-9">
                 <div className="ccContentArea">{listItems}</div>
               </div>
             </div>
