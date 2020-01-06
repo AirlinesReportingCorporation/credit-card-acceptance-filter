@@ -7,6 +7,8 @@ import { hot } from "react-hot-loader";
 import axios from "axios";
 import XLSX from "xlsx";
 
+import Autosuggest from 'react-autosuggest';
+
 //navigation
 //import Navigation from './pages/Navigation.jsx';
 function search(nameKey, myArray) {
@@ -48,7 +50,8 @@ class App extends Component {
       cardData: [],
       filter: "",
       filterObj: [],
-      cardFilter: []
+      cardFilter: [],
+      cardList: []
     };
 
     this.getRoute = this.getRoute.bind(this);
@@ -63,7 +66,7 @@ class App extends Component {
     axios({
       method: "get",
       url:
-        "https://www2.arccorp.com/globalassets/support--training/agency-support/credit-card-acceptance/cc-acceptance-chart.xlsx?" +
+        "https://www2.arccorp.com/globalassets/support--training/agency-support/credit-card-acceptance/cchart.xlsx?" +
         new Date().toLocaleString(),
       responseType: "arraybuffer"
     }).then(function(response) {
@@ -74,6 +77,9 @@ class App extends Component {
       var workbookData = workbook["Sheets"]["CC Acceptance Chart"];
 
       var json = XLSX.utils.sheet_to_json(workbookData);
+
+      var cardTypes = [];
+
       e.setState({ jsonData: json });
 
       //traverseEntireWorkBook
@@ -83,6 +89,18 @@ class App extends Component {
 
         var str = key.match(/[a-z]+|[^a-z]+/gi);
 
+        if (str[0] === "D" && str[1] != 1) {
+          var payments = val.split("\n");
+
+          for (var i = 0; i < payments.length; i++) {
+            var paymentVal = payments[i].trim();
+
+            if (!(cardTypes.indexOf(paymentVal) > -1) && paymentVal != "") {
+              cardTypes.push(paymentVal);
+            }
+          }
+        }
+
         if (val) {
           if (str[1] === "1") {
             e.state.jsonHeaders[key[0]] = val; ///.replace(/ /g,"_").replace(":", "");
@@ -91,7 +109,10 @@ class App extends Component {
         }
       }
 
+      e.setState({ cardList: cardTypes });
+
       console.log(e.state.jsonHeaders);
+      console.log(e.state.cardList);
     });
   }
 
@@ -102,7 +123,7 @@ class App extends Component {
     for (var i = 0; i < x.length; i++) {
       x[i].checked = false;
     }
-    
+
     this.setState({ cardFilter: [] });
   }
 
@@ -160,11 +181,25 @@ class App extends Component {
         ? [search(this.state.filter, this.state.jsonData)]
         : this.state.jsonData;
 
-    
-
     if (this.state.cardFilter.length > 0) {
       objtofilter = this.state.cardData;
     }
+
+    const paymentItems = this.state.cardList.map((data, i) => {
+      return (
+        <div key={i}>
+          <label htmlFor={"card-" + i}>
+            <input
+              className="cardType"
+              name={"card-" + i}
+              type="checkbox"
+              onChange={this.cardChange.bind(this, data)}
+            />
+            {data}
+          </label>
+        </div>
+      );
+    });
 
     const listItems = objtofilter.map((data, i) => {
       var payment,
@@ -175,7 +210,7 @@ class App extends Component {
         var pay = data["Payment Type Accepted"].split("\n");
         var innerPayment = pay.map((data, i) => {
           return (
-            <div className={"paymentpill " + data} key={i}>
+            <div className={"paymentpill " + data.replace(/ /g, "-").replace(/\(/g, "").replace(/\)/g, "").replace("'", "")} key={i}>
               {data}
             </div>
           );
@@ -248,13 +283,13 @@ class App extends Component {
           <p className="animated fadeIn">
             The following information is provided to assist agencies and other
             parties in identifying forms of payment accepted by airlines and any
-            restriction place on the acceptance of those forms of payment.
+            restriction placed on the acceptance of those forms of payment.
           </p>
           <p className="animated fadeIn">
             If you have any question about payment acceptance through ARC please
             contact the Payment Services team at &nbsp;
-            <a href="mailto:????????services@arccorp.com">
-              ????????services@arccorp.com
+            <a href="mailto:CreditCardServices@arccorp.com">
+              CreditCardServices@arccorp.com
             </a>
             .
           </p>
@@ -271,8 +306,8 @@ class App extends Component {
                   <select
                     name="Airline"
                     id="Airline"
-                    onChange={(e) => this.airlineChange(e)}
-                    onInput={(e) => this.airlineChange(e)}
+                    onChange={e => this.airlineChange(e)}
+                    onInput={e => this.airlineChange(e)}
                     defaultValue={this.state.filter}
                     value={this.state.filter}
                   >
@@ -281,64 +316,7 @@ class App extends Component {
                   </select>
 
                   <div className="ccFilterTitle">Form of Payment</div>
-                  <div className="ccFilterSection">
-                    <input
-                      className="cardType"
-                      name="card"
-                      type="checkbox"
-                      onChange={this.cardChange.bind(this, "AMEX")}
-                    />
-                    <label htmlFor="">AMEX</label>
-                    <br />
-                    <input
-                      className="cardType"
-                      name="card"
-                      type="checkbox"
-                      onChange={this.cardChange.bind(this, "CA")}
-                    />
-                    <label htmlFor="">CA</label>
-                    <br />
-                    <input
-                      className="cardType"
-                      name="card"
-                      type="checkbox"
-                      onChange={this.cardChange.bind(this, "DCI")}
-                    />
-                    <label htmlFor="">DCI</label>
-                    <br />
-                    <input
-                      className="cardType"
-                      name="card"
-                      type="checkbox"
-                      onChange={this.cardChange.bind(this, "DS")}
-                    />
-                    <label htmlFor="">DS</label>
-                    <br />
-                    <input
-                      className="cardType"
-                      name="card"
-                      type="checkbox"
-                      onChange={this.cardChange.bind(this, "JCB")}
-                    />
-                    <label htmlFor="">JCB</label>
-                    <br />
-                    <input
-                      className="cardType"
-                      name="card"
-                      type="checkbox"
-                      onChange={this.cardChange.bind(this, "UATP")}
-                    />
-                    <label htmlFor="">UATP</label>
-                    <br />
-                    <input
-                      className="cardType"
-                      name="card"
-                      type="checkbox"
-                      onChange={this.cardChange.bind(this, "VI")}
-                    />
-                    <label htmlFor="">VI</label>
-                    <br />
-                  </div>
+                  <div className="ccFilterSection">{paymentItems}</div>
 
                   <div onClick={this.clearfilters} className="filterclear">
                     Clear Filters

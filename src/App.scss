@@ -16,16 +16,18 @@
   display: none;
 }
 
-.data-panel+footer {
+.data-panel + footer {
   margin-top: 0 !important;
 }
 
 #app {
-  background: #FFFFFF;
+  background: #ffffff;
 }
 
 .ccJumbo {
-  background: #222222 url("https://www2.arccorp.com/globalassets/support--training/agency-support/credit-card-acceptance/ccjumbo.jpg?1") center center no-repeat;
+  background: #222222
+    url("https://www2.arccorp.com/globalassets/support--training/agency-support/credit-card-acceptance/ccjumbo.jpg?1")
+    center center no-repeat;
   text-align: left;
   background-size: cover;
   padding: 40px 0 140px;
@@ -41,12 +43,13 @@
     left: 0;
     opacity: 1;
     z-index: 2;
-    content: '';
+    content: "";
   }
 
   h2 {
     color: #ffffff;
-    font-family: SourceSansPro-Black, SourceSansPro-Regular, helvetica, arial, sans-serif;
+    font-family: SourceSansPro-Black, SourceSansPro-Regular, helvetica, arial,
+      sans-serif;
     font-size: 3.5rem;
     position: relative;
     z-index: 3;
@@ -77,10 +80,10 @@
   }
 
   .container {
-    background: #F2F7F8;
+    background: #f2f7f8;
     position: relative;
     border-radius: 30px;
-    box-shadow: 6px 10px 40px rgba(150,150,150,.3);
+    box-shadow: 6px 10px 40px rgba(150, 150, 150, 0.3);
     padding: 60px;
   }
 
@@ -114,7 +117,8 @@
     }
   }
 
-  .ccContentArea {}
+  .ccContentArea {
+  }
 }
 
 .ccAirlineContainer {
@@ -123,7 +127,8 @@
   background: #ffffff;
   border-radius: 10px;
   font-size: 1.4rem;
-  box-shadow: 0 10px 20px rgba(200,200,200,0.3), 0 6px 6px rgba(200,200,200,0.3);
+  box-shadow: 0 10px 20px rgba(200, 200, 200, 0.3),
+    0 6px 6px rgba(200, 200, 200, 0.3);
 
   .row {
     margin: 0;
@@ -148,13 +153,13 @@
   }
 
   .ccAirlineCode {
-    color: #0C1C47;
+    color: #0c1c47;
     font-family: SourceSansPro-Bold, SourceSansPro-Regular, arial, sans-serif;
     font-size: 1.5rem;
   }
 
   strong {
-    display:block;
+    display: block;
     font-family: SourceSansPro-Regular, arial, sans-serif;
     font-size: 0.8rem;
     text-transform: uppercase;
@@ -169,7 +174,7 @@
   color: #ffffff;
   font-family: SourceSansPro-Bold, arial, sans-serif;
   text-align: center;
-  font-size: .9rem;
+  font-size: 0.9rem;
   margin-top: 15px;
   margin-bottom: 15px;
   padding: 12px 8px;
@@ -178,43 +183,60 @@
 }
 
 .paymentpill {
-  padding: 5px;
-  display:inline-block;
+  padding: 5px 8px;
+  display: inline-block;
   border: 1px solid #888888;
   color: #888888;
   border-radius: 16px;
   margin-right: 5px;
-  font-size: 1rem;
+  font-size: .875rem;
   min-width: 55px;
   text-align: center;
 
-  &.AMEX {
+  &.AMEX,
+  &.American-Express-AX {
     color: #2a6fc7;
     border-color: #2a6fc7;
   }
 
-  &.UATP {
+  &.UATP,
+  &.UATP-TP {
     color: #67b256;
     border-color: #67b256;
   }
 
-  &.JCB {
+  &.JCB,
+  &.JCB-JC {
     color: #3889e1;
     border-color: #3889e1;
   }
 
-  &.DS {
+  &.DS,
+  &.Discover-Card-DS {
     color: #ec5d2a;
     border-color: #ec5d2a;
   }
 
-  &.VI {
+  &.VI,
+  &.Visa-VI {
     color: #1a1f71;
     border-color: #1a1f71;
   }
 
-  &.CA {
+  &.CA,
+  &.Mastercard-CA {
     color: green;
     border-color: green;
+  }
+
+  &.Diners-Club-Intl-DC {
+    color: #1b4c92;
+    border-color: #1b4c92;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1250px;
   }
 }
