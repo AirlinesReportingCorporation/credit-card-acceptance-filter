@@ -141,6 +141,7 @@
   color: #888888;
   border-radius: 16px;
   margin-right: 5px;
+  margin-bottom: 5px;
   font-size: .875rem;
   min-width: 55px;
   text-align: center; }
@@ -165,6 +166,10 @@
   .paymentpill.Diners-Club-Intl-DC {
     color: #1b4c92;
     border-color: #1b4c92; }
+
+.updatedDate {
+  color: #ababab;
+  font-size: 1rem; }
 
 @media (min-width: 1200px) {
   .container {
